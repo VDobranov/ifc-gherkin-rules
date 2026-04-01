@@ -1,6 +1,14 @@
 import functools
 import math
 import re
+import sys
+import os
+
+# Добавляем features/steps в sys.path для импорта utils
+_steps_dir = os.path.dirname(os.path.abspath(__file__))
+if _steps_dir not in sys.path:
+    sys.path.insert(0, _steps_dir)
+
 from ifc_validation_models.dataclass_compat import FrozenDict
 from utils import misc
 from functools import wraps
