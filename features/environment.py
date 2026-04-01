@@ -11,7 +11,8 @@ import time
 import logging
 import socket
 
-from validation_results import ValidationOutcome, ValidationOutcomeDjango, ValidationOutcomeCode, OutcomeSeverity
+# Ленивый импорт — Django инициализируется только при использовании
+# from validation_results import ValidationOutcome, ValidationOutcomeDjango, ValidationOutcomeCode, OutcomeSeverity
 from main import ExecutionMode
 
 @functools.cache
@@ -125,7 +126,12 @@ def after_scenario(context, scenario):
 def after_feature(context, feature):
     execution_mode = context.config.userdata.get('execution_mode')
     if execution_mode and execution_mode == 'ExecutionMode.PRODUCTION': # DB interaction only needed during production run, not in testing
-        from validation_results import OutcomeSeverity, ModelInstance, ValidationTask
+        from validation_results import (
+            OutcomeSeverity, ModelInstance, ValidationTask,
+            ValidationOutcomeDjango, _init_django
+        )
+        # Инициализируем Django только для PRODUCTION режима
+        _init_django()
         from django.db import transaction
 
         def reduce_db_outcomes(feature_outcomes):
